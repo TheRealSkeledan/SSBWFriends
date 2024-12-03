@@ -6,8 +6,17 @@ A game created by Skeledan based off of Super Smash Bros and Mortal Kombat where
 ## Characters
 ### Characters in game
 The game will release with a demo of 10 total characters
-* Names
-* 
+* Melody
+* Sunny
+* Oobleck
+* Tom
+* Nor
+* Firedragon
+* Rikashi
+* Lorz
+* Amanda
+* BillGoob
+
 ### Abilities
 All characters have a set of abilities that are unique to their own. 
 The abilities are as follows:
