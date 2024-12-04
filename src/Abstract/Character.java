@@ -9,10 +9,14 @@ public abstract class Entity {
 	protected double speed;
 	protected BufferedImage image;
 
-	public Character(String name, int hp, int dmg, double speed) {
+	public Character(String name, int hp, int dmg, double speed, double x, double y) {
 		this.name = name;
 		this.hp = hp;
 		this.dmg = dmg;
 		this.speed = speed;
+		this.x = x;
+		this.y = y;
 	}
+
+	public 
 }
