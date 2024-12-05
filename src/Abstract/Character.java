@@ -31,6 +31,14 @@ public abstract class Character {
 	}
 
 	public String getSpecial() {
-		return image + 
+		return image + "special.png";
+	}
+
+	public String getFinal() {
+		return image + "final.png";
+	}
+
+	public String getTaunt() {
+		return image + "taunt.png";
 	}
 }
