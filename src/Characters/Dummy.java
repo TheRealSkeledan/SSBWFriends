@@ -12,13 +12,12 @@ public class Dummy extends Character {
         super("Dummy", x, y, 1, 1, 1);
         this.jumping = false;
         this.jumpSpeed = 0;
-        this.gravity = 0.5;
     }
 
     @Override
     public void updatePosition() {
         if (jumping) {
-            jumpSpeed += gravity;
+            jumpSpeed += weight;
             y += jumpSpeed;
 
             if (y >= initialY) {
