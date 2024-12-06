@@ -1,44 +1,59 @@
 package Abstract;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 public abstract class Character {
-	protected String name;
-	protected int hp, dmg;
-	protected double x, y;
-	protected double speed;
-	protected String image;
+    protected String name;
+    protected int x, y;
+    protected BufferedImage idleImage;
+    protected int damage;
+    protected double speed;
+    protected double weight;
 
-	public Character(String name, int hp, int dmg, double speed, double x, double y) {
-		this.name = name;
-		this.hp = hp;
-		this.dmg = dmg;
-		this.speed = speed;
-		this.x = x;
-		this.y = y;
+    public Character(String name, int x, int y, int damage, double speed, double weight) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.damage = damage;
+        this.speed = speed;
+        this.weight = weight;
+        
+        try {
+            this.idleImage = ImageIO.read(new File("assets/images/characters/" + name + "/idle.png"));
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle image loading errors
+        }
+    }
 
-		image = "assets/characters/" + name;
-	}
+    public Character() {
+        
+    }
 
-	public String getIdle() {
-		return image + "idle.png";
-	}
+    public int getX() {
+        return x;
+    }
 
-	public String getDamaged() {
-		return image + "dmg.png";
-	}
+    public int getY() {
+        return y;
+    }
 
-	public String getAttack() {
-		return image + "atk.png";
-	}
+    public void moveX(int amt) {
+        x += amt;
+    }
 
-	public String getSpecial() {
-		return image + "special.png";
-	}
+    public void moveY(int amt) {
+        y += amt;
+    }
 
-	public String getFinal() {
-		return image + "final.png";
-	}
+    // Method to get the idle image
+    public BufferedImage getIdle() {
+        return idleImage;
+    }
 
-	public String getTaunt() {
-		return image + "taunt.png";
-	}
+    // Abstract method for updating position (to be implemented by subclasses)
+    public abstract void updatePosition();
 }

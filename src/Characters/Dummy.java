@@ -1,11 +1,44 @@
 package Characters;
 
-public class Dummy {
-    int health = 100;
-    int dmg = 10;
-    String image = "assets/images/characters/dummy";
+import Abstract.Character;
 
-    public Dummy() {
+public class Dummy extends Character {
+    private boolean jumping;
+    private double jumpSpeed;
+    private double gravity;
+    private int  initialY;
 
+    public Dummy(int x, int y) {
+        super("Dummy", x, y, 1, 1, 1);
+        this.jumping = false;
+        this.jumpSpeed = 0;
+        this.gravity = 0.5;
+    }
+
+    @Override
+    public void updatePosition() {
+        if (jumping) {
+            jumpSpeed += gravity;
+            y += jumpSpeed;
+
+            if (y >= initialY) {
+                y = initialY;
+                jumping = false;
+                jumpSpeed = 0;
+            }
+        }
+    }
+
+    public void move(int dx, int dy, int SCREENWIDTH, int SCREENHEIGHT) {
+        x += dx;
+        y += dy;
+    }
+
+    public void jump() {
+        if (!jumping) {
+            this.jumping = true;
+            this.jumpSpeed = -10;
+            this.initialY = y;
+        }
     }
 }
