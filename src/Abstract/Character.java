@@ -8,11 +8,11 @@ import javax.imageio.ImageIO;
 
 public abstract class Character {
     protected String name;
-    protected int x, y;
-    protected BufferedImage idleImage;
+    public int x, y;
+    protected BufferedImage image;
     protected int damage;
-    protected double speed;
-    protected double weight;
+    public double speed, weight;
+    protected String action;
 
     public Character(String name, int x, int y, int damage, double speed, double weight) {
         this.name = name;
@@ -23,9 +23,9 @@ public abstract class Character {
         this.weight = weight;
         
         try {
-            this.idleImage = ImageIO.read(new File("assets/images/characters/" + name + "/idle.png"));
+            this.image = ImageIO.read(new File("assets/images/characters/" + name + "/idle.png"));
         } catch (IOException e) {
-            e.printStackTrace(); // Handle image loading errors
+            System.out.println("Path couldn't find the file " + action + ".png");
         }
     }
 
@@ -40,20 +40,22 @@ public abstract class Character {
     public int getY() {
         return y;
     }
-
-    public void moveX(int amt) {
-        x += amt;
+    
+    public int getWidth() {
+        return image != null ? image.getWidth() : 0;
     }
 
-    public void moveY(int amt) {
-        y += amt;
+    public int getHeight() {
+        return image != null ? image.getHeight() : 0;
     }
 
-    // Method to get the idle image
     public BufferedImage getIdle() {
-        return idleImage;
+        return image;
     }
 
-    // Abstract method for updating position (to be implemented by subclasses)
+    public void setImage(String action) {
+        this.action = action;
+    }
+
     public abstract void updatePosition();
 }

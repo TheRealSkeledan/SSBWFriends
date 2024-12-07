@@ -1,48 +1,49 @@
 package Engine;
+
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Map {
-    private final static int[][][] testMaps = {
-        {
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-            {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-            {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    private static String name;
+    private static BufferedImage foreground, background;
+
+    public static void setName(String n) {
+        name = n;
+
+        try {
+            foreground = ImageIO.read(new File("assets/images/backgrounds/" + name + "-front.png"));
+            background = ImageIO.read(new File("assets/images/backgrounds/" + name + "-back.png"));
+        } catch (IOException e) {
+            System.out.println("Path couldn't find the file, " + name);
         }
-    };
-
-    private static String bg = "";
-
-    public Map(String bg) {
-        Map.bg = "assets/images/backgrounds/" + bg + ".png";
     }
 
-    public static void setBG(String bg) {
-        Map.bg = bg;
+    public static String getName() {
+        return name;
     }
 
-    public static String getBG() {
-        return bg;
+    public static BufferedImage getForeground() {
+        return foreground;
     }
 
-    public static void drawMap(int SCREENWIDTH, int SCREENHEIGHT, int map, Graphics g) {
-        int[][] curMap = testMaps[map - 1];
-        int numRows = curMap.length;
-        int numCols = curMap[0].length;
+    public static BufferedImage getBackground() {
+        return background;
+    }
 
-        int tileWidth = (SCREENWIDTH / numCols);
-        int tileHeight = (SCREENHEIGHT / numRows);
+    public static void drawStage(Graphics g) {
+        g.drawImage(getBackground(), 0, 0, null);
+        g.drawImage(getForeground(), 0, 0, null);
+    }
 
-        for (int r = 0; r < numRows; r++) {
-            for (int c = 0; c < numCols; c++) {
-                if (curMap[r][c] == 1) {
-                    g.fillRect(c * tileWidth, r * tileHeight, tileWidth, tileHeight);
-                }
-            }
-        }
+    public static int getWidth() {
+        return foreground != null ? foreground.getWidth() : 0;
+    }
+
+    public static int getHeight() {
+        return foreground != null ? foreground.getHeight() : 0;
     }
 }

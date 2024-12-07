@@ -1,10 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import Characters.Dummy;
 import Engine.Map;
@@ -13,80 +17,114 @@ public class Main extends JPanel {
     private static final int SCREEN_WIDTH = 1280;
     private static final int SCREEN_HEIGHT = 720;
 
-    boolean jumping = false;
+    private boolean[] keys = new boolean[4];
+    private boolean isFacingRight = true;
 
     private Dummy dummy;
 
+    private Timer timer;
+
+    private long lastTime = System.nanoTime();
+    private int fps = 0;
+    private int frameCount = 0;
+
     public Main() {
-        dummy = new Dummy(100, 100);
+        dummy = new Dummy(100, 300);
+        dummy.setImage("idle");
+        Map.setName("testStage");
 
         this.setFocusable(true);
-        this.addKeyListener(new CharacterMovementListener());
+        this.addKeyListener(new Keyboard());
+        timer = new Timer(9, new TimerListener());
+        timer.start();
     }
 
-    // Paint the map and the character
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if(!jumping) {
-            while(dummy.getY() != 300) {
-                if(dummy.getY() < 300) 
-                    dummy.moveY(1);
-                else   
-                    dummy.moveY(-1);
-            }
-        }
-
-        Map.drawMap(SCREEN_WIDTH, SCREEN_HEIGHT, 1, g);
-
+        move();
         dummy.updatePosition();
 
-        g.drawImage(dummy.getIdle(), dummy.getX(), dummy.getY(), this);
+        Graphics2D g2d = (Graphics2D) g;
 
-        long nanoseconds = System.nanoTime();
-        long dif = System.nanoTime() - nanoseconds;
-        double fps = 1000000000.0 / dif; 
-        g.setColor(Color.red); 
-        g.drawString("FPS: " + Integer.toString((int) fps), 10, 10);
+        Map.drawStage(g2d);
+
+        if (isFacingRight) {
+            g2d.drawImage(dummy.getIdle(), dummy.getX(), dummy.getY(), this);
+        } else {
+            g2d.drawImage(dummy.getIdle(), dummy.getX() + dummy.getWidth(), dummy.getY(), -dummy.getWidth(), dummy.getHeight(), this);
+        }
+
+        g2d.setTransform(g2d.getDeviceConfiguration().getDefaultTransform());
+
+        long currentTime = System.nanoTime();
+        frameCount++;
+        if (currentTime - lastTime >= 1000000000) {
+            fps = frameCount;
+            frameCount = 0;
+            lastTime = currentTime;
+        }
+
+        g.setColor(Color.red);
+        g.drawString("FPS: " + fps, 10, 10);
     }
 
-    private class CharacterMovementListener implements KeyListener {
+
+    private class TimerListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            move();
+            repaint();
+        }
+    }
+
+    private class Keyboard implements KeyListener {
+        @Override
+        public void keyTyped(KeyEvent e) {}
+
         @Override
         public void keyPressed(KeyEvent e) {
-            int dx = 0, dy = 0;
-
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT -> dx = -5;
-                case KeyEvent.VK_RIGHT -> dx = 5;
-                case KeyEvent.VK_UP -> {
-                    dummy.jump();
-                    jumping = true;
+            switch (e.getKeyChar()) {
+                case 'w' -> keys[0] = true;
+                case 'a' -> {
+                    keys[1] = true;
+                    isFacingRight = false;
+                }
+                case 's' -> keys[2] = true;
+                case 'd' -> {
+                    keys[3] = true;
+                    isFacingRight = true;
                 }
             }
-
-            if (dx != 0 || dy != 0) {
-                dummy.moveX(dx);
-                dummy.moveY(dy);
-            }
-
-            repaint();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            switch(e.getKeyCode()) {
-                case KeyEvent.VK_UP -> {
-                    jumping = false;
-                }
+            switch (e.getKeyChar()) {
+                case 'w' -> keys[0] = false;
+                case 'a' -> keys[1] = false;
+                case 's' -> keys[2] = false;
+                case 'd' -> keys[3] = false;
             }
         }
-
-        @Override
-        public void keyTyped(KeyEvent e) {}
     }
 
-    // Main method to launch the game
+    public void move() {
+        if (keys[0]) {
+            dummy.jump();
+        }
+        if (keys[1] && dummy.x > 0) {
+            dummy.x -= 1 * dummy.speed;
+        }
+        if (keys[2]) {
+            dummy.y += 1 * dummy.weight;
+        }
+        if (keys[3] && dummy.x + dummy.getWidth() < SCREEN_WIDTH) {
+            dummy.x += 1 * dummy.speed;
+        }
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("SSF");
         frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);

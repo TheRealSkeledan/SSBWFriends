@@ -9,7 +9,7 @@ public class Dummy extends Character {
     private int  initialY;
 
     public Dummy(int x, int y) {
-        super("Dummy", x, y, 1, 1, 1);
+        super("Dummy", x, y, 1, 7, 1);
         this.jumping = false;
         this.jumpSpeed = 0;
     }
@@ -26,11 +26,6 @@ public class Dummy extends Character {
                 jumpSpeed = 0;
             }
         }
-    }
-
-    public void move(int dx, int dy, int SCREENWIDTH, int SCREENHEIGHT) {
-        x += dx;
-        y += dy;
     }
 
     public void jump() {
