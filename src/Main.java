@@ -1,17 +1,16 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+// Main.java
 
 import Characters.Dummy;
 import Engine.Map;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Main extends JPanel {
     private static final int SCREEN_WIDTH = 1280;
@@ -22,61 +21,59 @@ public class Main extends JPanel {
 
     private Dummy dummy;
 
-    private Timer timer;
-
     private long lastTime = System.nanoTime();
     private int fps = 0;
     private int frameCount = 0;
 
+    private static final int TARGET_FPS = 300;
+    private static final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
+
+    private ScheduledExecutorService executorService;
+
     public Main() {
         dummy = new Dummy(100, 300);
-        dummy.setImage("idle");
         Map.setName("testStage");
 
         this.setFocusable(true);
         this.addKeyListener(new Keyboard());
-        timer = new Timer(9, new TimerListener());
-        timer.start();
+
+        setDoubleBuffered(true);
+
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::gameLoop, 0, 1000000000 / TARGET_FPS, TimeUnit.NANOSECONDS);
+    }
+
+    private void gameLoop() {
+        move();
+        dummy.updatePosition();
+        repaint();
+
+        long now = System.nanoTime();
+        frameCount++;
+        if (now - lastTime >= 1000000000) {
+            fps = frameCount;
+            frameCount = 0;
+            lastTime = now;
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        move();
-        dummy.updatePosition();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        Graphics2D g2d = (Graphics2D) g;
-
-        Map.drawStage(g2d);
+        Map.drawStage(g);
 
         if (isFacingRight) {
-            g2d.drawImage(dummy.getIdle(), dummy.getX(), dummy.getY(), this);
+            g.drawImage(dummy.getIdle(), dummy.getX(), dummy.getY(), this);
         } else {
-            g2d.drawImage(dummy.getIdle(), dummy.getX() + dummy.getWidth(), dummy.getY(), -dummy.getWidth(), dummy.getHeight(), this);
+            g.drawImage(dummy.getIdle(), dummy.getX() + dummy.getWidth(), dummy.getY(), -dummy.getWidth(), dummy.getHeight(), this);
         }
 
-        g2d.setTransform(g2d.getDeviceConfiguration().getDefaultTransform());
-
-        long currentTime = System.nanoTime();
-        frameCount++;
-        if (currentTime - lastTime >= 1000000000) {
-            fps = frameCount;
-            frameCount = 0;
-            lastTime = currentTime;
-        }
-
-        g.setColor(Color.red);
+        g.setColor(Color.RED);
         g.drawString("FPS: " + fps, 10, 10);
-    }
-
-
-    private class TimerListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            move();
-            repaint();
-        }
     }
 
     private class Keyboard implements KeyListener {
@@ -114,22 +111,24 @@ public class Main extends JPanel {
         if (keys[0]) {
             dummy.jump();
         }
-        if (keys[1] && dummy.x > 0) {
-            dummy.x -= 1 * dummy.speed;
+        if (keys[1]) {
+            dummy.move(-dummy.speed, 0);
         }
         if (keys[2]) {
-            dummy.y += 1 * dummy.weight;
+            dummy.move(0, (int)dummy.weight);
         }
-        if (keys[3] && dummy.x + dummy.getWidth() < SCREEN_WIDTH) {
-            dummy.x += 1 * dummy.speed;
+        if (keys[3]) {
+            dummy.move(dummy.speed, 0);
         }
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("SSF");
-        frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(new Main());
-        frame.setVisible(true);
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("SSF");
+            frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new Main());
+            frame.setVisible(true);
+        });
     }
 }
