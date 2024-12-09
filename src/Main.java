@@ -99,10 +99,15 @@ public class Main extends JPanel {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyChar()) {
-                case 'w' -> keys[0] = false;
-                case 'a' -> keys[1] = false;
-                case 's' -> keys[2] = false;
-                case 'd' -> keys[3] = false;
+                case 'w':
+                    keys[0] = false;
+                case 'a':
+                    keys[1] = false;
+                case 's':
+                    keys[2] = false;
+                    dummy.setImage("idle");
+                case 'd':
+                    keys[3] = false;
             }
         }
     }
@@ -115,7 +120,7 @@ public class Main extends JPanel {
             dummy.move(-dummy.speed, 0);
         }
         if (keys[2]) {
-            dummy.move(0, (int)dummy.weight);
+            dummy.setImage("crouch");
         }
         if (keys[3]) {
             dummy.move(dummy.speed, 0);

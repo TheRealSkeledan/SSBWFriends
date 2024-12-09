@@ -32,7 +32,7 @@ public abstract class Character {
     }
 
     private void loadImages() {
-        String[] actions = {"idle", "jump"};
+        String[] actions = {"idle", "jump", "crouch"};
         for (String act : actions) {
             try {
                 BufferedImage img = ImageIO.read(new File("assets/images/characters/" + name + "/" + act + ".png"));
@@ -52,6 +52,9 @@ public abstract class Character {
     }
 
     public void move(int x, int y) {
+        if(action.equals("crouch"))
+            setImage("idle");
+
         if (this.x + x >= -88 && this.x + x <= 1350 - getWidth())
             this.x += x;
 
