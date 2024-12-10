@@ -105,4 +105,6 @@ public abstract class Character {
             setImage("jump");
         }
     }
+
+    public void AI() {};
 }
