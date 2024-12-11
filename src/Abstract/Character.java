@@ -19,7 +19,7 @@ public abstract class Character {
     protected double jumpSpeed = 0;
     protected int initialY;
 
-    public Character(String name, int x, int y, int damage, int speed, double weight) {
+    public Character(String name, int x, int y, int damage, int strength, int resistance, int speed, double weight) {
         this.name = name;
         this.x = x;
         this.y = y;
