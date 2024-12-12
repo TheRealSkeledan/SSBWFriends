@@ -23,9 +23,9 @@ The abilities are as follows:
 * Light Attack
 * Heavy Attack
 * Special Attack
-* Final Attack(Must have Full XP Bar)
+* Final Attack(Must have Full KP Bar)
 
-But characters also have a set of attacks that aren't unqiue, uses half of the XP bar:
+But characters also have a set of attacks that aren't unqiue, uses half of the KP bar:
 * Stun
 * More attack damage
 * Speed increase
