@@ -2,6 +2,7 @@
 
 import Characters.Dummy;
 import Engine.Map;
+import Engine.UI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -33,6 +34,7 @@ public class Main extends JPanel {
     public Main() {
         dummy = new Dummy(100, 300);
         Map.setName("testStage");
+        UI.create();
 
         this.setFocusable(true);
         this.addKeyListener(new Keyboard());
@@ -74,6 +76,8 @@ public class Main extends JPanel {
 
         g.setColor(Color.RED);
         g.drawString("FPS: " + fps, 10, 10);
+
+        UI.drawUI(dummy.getHP(), dummy.getKP(), g);
     }
 
     private class Keyboard implements KeyListener {

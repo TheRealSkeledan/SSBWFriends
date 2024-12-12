@@ -18,6 +18,7 @@ public abstract class Character {
     protected boolean jumping = false;
     protected double jumpSpeed = 0;
     protected int initialY;
+    protected int KP = 0, HP = 100;
 
     public Character(String name, int x, int y, int damage, int strength, int resistance, int speed, double weight) {
         this.name = name;
@@ -104,6 +105,30 @@ public abstract class Character {
             this.initialY = y;
             setImage("jump");
         }
+    }
+
+    public void changeHP(int amt) {
+        int oldHP = HP - amt;
+
+        while(HP != oldHP) {
+            HP--;
+        }
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void changeKP(int amt) {
+        int oldKP = KP - amt;
+
+        while(KP != oldKP) {
+            KP--;
+        }
+    }
+
+    public int getKP() {
+        return KP;
     }
 
     public void AI() {};
