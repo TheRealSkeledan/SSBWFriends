@@ -29,8 +29,8 @@ public class UI {
 
     public static void drawUI(int health, int killPower, Graphics g) {
         g.setColor(new Color(43, 255, 167));
-        g.fillRect(0, 0, 30 * health/10, 50);
-        g.drawImage(getHPBar(), 0, 0, 300, 50, null);
+        g.fillRect(0, 0, 50 * health/10, 50);
+        g.drawImage(getHPBar(), 0, 0, 500, 50, null);
         
         g.fillRect(0, 600, 3 * killPower, 100);
         g.drawImage(getKPBar(), 0, 600, null);
