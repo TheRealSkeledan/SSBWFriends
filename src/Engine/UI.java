@@ -12,8 +12,8 @@ public class UI {
 
     public static void create() {
         try {
-            BufferedImage HPBar = ImageIO.read(new File("assets/images/ui/healthBar.png"));
-            BufferedImage KPBar = ImageIO.read(new File("assets/images/ui/kpbar.png"));
+            HPBar = ImageIO.read(new File("assets/images/ui/healthBar.png"));
+            KPBar = ImageIO.read(new File("assets/images/ui/kpbar.png"));
         } catch (IOException e) {
             System.out.println("Failed to load the images!");
         }
@@ -29,8 +29,8 @@ public class UI {
 
     public static void drawUI(int health, int killPower, Graphics g) {
         g.setColor(new Color(43, 255, 167));
-        g.fillRect(0, 0, 15 * health/10, 30);
-        g.drawImage(getHPBar(), 300, 300, null);
+        g.fillRect(0, 0, 30 * health/10, 50);
+        g.drawImage(getHPBar(), 0, 0, 300, 50, null);
         
         g.fillRect(0, 600, 3 * killPower, 100);
         g.drawImage(getKPBar(), 0, 600, null);
