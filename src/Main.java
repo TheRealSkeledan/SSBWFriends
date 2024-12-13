@@ -74,10 +74,10 @@ public class Main extends JPanel {
             g.drawImage(dummy.getIdle(), dummy.getX() + dummy.getWidth(), dummy.getY(), -dummy.getWidth(), dummy.getHeight(), this);
         }
 
+        UI.drawUI(dummy.getHP(), dummy.getKP(), g);
+
         g.setColor(Color.RED);
         g.drawString("FPS: " + fps, 10, 10);
-
-        UI.drawUI(dummy.getHP(), dummy.getKP(), g);
     }
 
     private class Keyboard implements KeyListener {
