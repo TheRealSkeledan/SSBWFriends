@@ -1,3 +1,5 @@
+// Character.java
+
 package Abstract;
 
 import java.awt.image.BufferedImage;
@@ -108,23 +110,15 @@ public abstract class Character {
     }
 
     public void changeHP(int amt) {
-        int oldHP = HP - amt;
-
-        while(HP != oldHP) {
-            HP--;
-        }
+        HP = Math.max(0, HP - amt);
     }
-
+    
     public int getHP() {
         return HP;
     }
 
     public void changeKP(int amt) {
-        int oldKP = KP - amt;
-
-        while(KP != oldKP) {
-            KP--;
-        }
+        KP = Math.max(0, KP - amt);
     }
 
     public int getKP() {
