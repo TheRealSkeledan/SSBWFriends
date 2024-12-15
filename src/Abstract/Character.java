@@ -110,7 +110,8 @@ public abstract class Character {
     }
 
     public void changeHP(int amt) {
-        HP = Math.max(0, HP - amt);
+        if(HP + amt >= 0 && HP + amt <= 100)
+            HP = HP + amt;
     }
     
     public int getHP() {
@@ -118,7 +119,8 @@ public abstract class Character {
     }
 
     public void changeKP(int amt) {
-        KP = Math.max(0, KP - amt);
+        if(KP + amt >= 0 && KP + amt <= 100)
+            KP = KP + amt;
     }
 
     public int getKP() {
