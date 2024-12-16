@@ -97,10 +97,6 @@ public class Main extends JPanel {
                     keys[3] = true;
                     isFacingRight = true;
                 }
-                case 'k' -> dummy.changeKP(5);
-                case 'l' -> dummy.changeKP(-5);
-                case 'o' -> dummy.changeHP(5);
-                case 'p' -> dummy.changeHP(-5);
             }
         }
 
