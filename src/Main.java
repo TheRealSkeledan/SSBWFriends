@@ -1,6 +1,6 @@
 // Main.java
 
-import Characters.Dummy;
+import Characters.Tom;
 import Engine.Map;
 import Engine.UI;
 import java.awt.Color;
@@ -20,7 +20,7 @@ public class Main extends JPanel {
     private boolean[] keys = new boolean[4];
     private boolean isFacingRight = true;
 
-    private Dummy dummy;
+    private Tom dummy;
 
     private long lastTime = System.nanoTime();
     private int fps = 0;
@@ -32,7 +32,7 @@ public class Main extends JPanel {
     private ScheduledExecutorService executorService;
 
     public Main() {
-        dummy = new Dummy(100, 300);
+        dummy = new Tom(100, 300);
         Map.setName("testStage");
         UI.create();
 
@@ -107,7 +107,7 @@ public class Main extends JPanel {
                 case 'a' -> keys[1] = false;
                 case 's' -> {
                     keys[2] = false;
-                    dummy.setImage("idle");
+                    dummy.setAction("idle");
                 }
                 case 'd' -> keys[3] = false;
             }
@@ -123,7 +123,7 @@ public class Main extends JPanel {
             dummy.move(-dummy.speed, 0);
         }
         if (keys[2]) {
-            dummy.setImage("crouch");
+            dummy.setAction("crouch");
         }
         if (keys[3]) {
             dummy.move(dummy.speed, 0);

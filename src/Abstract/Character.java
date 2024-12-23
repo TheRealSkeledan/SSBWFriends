@@ -1,10 +1,9 @@
 package Abstract;
 
+import Engine.AnimationLoader;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-
-import Engine.AnimationLoader;
 
 public abstract class Character {
     protected String name;
@@ -39,8 +38,12 @@ public abstract class Character {
     public void setAction(String action) {
         if (!this.action.equals(action)) {
             this.action = action;
-            this.frameIndex = 0; // Reset to first frame
+            this.frameIndex = 0;
         }
+        updateCurrentFrame();
+    }
+
+    private void updateCurrentFrame() {
         if (animations.containsKey(action)) {
             currentFrame = animations.get(action)[frameIndex];
         } else {
@@ -51,8 +54,8 @@ public abstract class Character {
     public void updateAnimationFrame() {
         if (animations.containsKey(action)) {
             BufferedImage[] frames = animations.get(action);
-            frameIndex = (frameIndex + 1) % frames.length; // Cycle frames
-            currentFrame = frames[frameIndex];
+            frameIndex = (frameIndex + 1) % frames.length;
+            updateCurrentFrame();
         }
     }
 
@@ -61,8 +64,12 @@ public abstract class Character {
     }
 
     public void move(int dx, int dy) {
-        this.x += dx;
-        this.y += dy;
+        if (x + dx >= 0 && x + dx <= 1280 - getWidth()) {
+            x += dx;
+        }
+        if (y + dy >= 0 && y + dy <= 720 - getHeight()) {
+            y += dy;
+        }
         setAction("walk");
     }
 
@@ -90,5 +97,41 @@ public abstract class Character {
 
     public BufferedImage getIdle() {
         return animations.containsKey("idle") ? animations.get("idle")[0] : null;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return currentFrame != null ? currentFrame.getWidth() : 0;
+    }
+    
+    public int getHeight() {
+        return currentFrame != null ? currentFrame.getHeight() : 0;
+    }
+
+    public void changeHP(int amt) {
+        if (HP + amt >= 0 && HP + amt <= 100) {
+            HP += amt;
+        }
+    }
+    
+    public int getHP() {
+        return HP;
+    }
+
+    public void changeKP(int amt) {
+        if (KP + amt >= 0 && KP + amt <= 100) {
+            KP += amt;
+        }
+    }
+
+    public int getKP() {
+        return KP;
     }
 }
