@@ -1,66 +1,88 @@
+// AnimationLoader.java
+
 package Engine;
 
-import javax.imageio.ImageIO;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.*;
 
+// Thank you ChatGPT
 public class AnimationLoader {
+
     public static Map<String, BufferedImage[]> loadAnimations(String characterName) {
         Map<String, BufferedImage[]> animations = new HashMap<>();
+
         try {
-            // File paths
             String basePath = "assets/images/characters/" + characterName + "/";
             File xmlFile = new File(basePath + characterName + ".xml");
-            BufferedImage spriteSheet = ImageIO.read(new File(basePath + characterName + ".png"));
+            File spritesheetFile = new File(basePath + characterName + ".png");
 
-            // Initialize StAX parser
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(new java.io.FileInputStream(xmlFile));
+            if (!xmlFile.exists()) {
+                throw new Exception("XML file not found: " + xmlFile.getAbsolutePath());
+            }
+            if (!spritesheetFile.exists()) {
+                throw new Exception("Spritesheet file not found: " + spritesheetFile.getAbsolutePath());
+            }
 
-            String currentAction = null;
-            BufferedImage[] frames = null;
-            int frameIndex = 0;
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xmlFile);
 
-            while (reader.hasNext()) {
-                int event = reader.next();
+            doc.getDocumentElement().normalize();
 
-                switch (event) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        if (reader.getLocalName().equals("animation")) {
-                            currentAction = reader.getAttributeValue(null, "name");
-                            int totalFrames = Integer.parseInt(reader.getAttributeValue(null, "frames"));
-                            frames = new BufferedImage[totalFrames];
-                            frameIndex = 0;
-                        } else if (reader.getLocalName().equals("frame")) {
-                            // Read frame attributes
-                            int x = Integer.parseInt(reader.getAttributeValue(null, "x"));
-                            int y = Integer.parseInt(reader.getAttributeValue(null, "y"));
-                            int width = 300;  // Fixed frame size
-                            int height = 300;
-
-                            if (frames != null) {
-                                frames[frameIndex++] = spriteSheet.getSubimage(x, y, width, height);
-                            }
-                        }
-                        break;
-
-                    case XMLStreamConstants.END_ELEMENT:
-                        if (reader.getLocalName().equals("animation") && currentAction != null && frames != null) {
-                            animations.put(currentAction, frames);
-                        }
-                        break;
+            NodeList characterNodes = doc.getElementsByTagName("character");
+            Node characterNode = null;
+            for (int i = 0; i < characterNodes.getLength(); i++) {
+                Element element = (Element) characterNodes.item(i);
+                if (element.getAttribute("name").equalsIgnoreCase(characterName)) {
+                    characterNode = element;
+                    break;
                 }
             }
-            reader.close();
+
+            if (characterNode == null) {
+                throw new Exception("Character '" + characterName + "' not found in XML.");
+            }
+
+            Element characterElement = (Element) characterNode;
+            int spriteWidth = Integer.parseInt(characterElement.getAttribute("spriteWidth"));
+            int spriteHeight = Integer.parseInt(characterElement.getAttribute("spriteHeight"));
+
+            BufferedImage spritesheet = ImageIO.read(spritesheetFile);
+
+            NodeList animationNodes = characterElement.getElementsByTagName("animation");
+            for (int i = 0; i < animationNodes.getLength(); i++) {
+                Element animationElement = (Element) animationNodes.item(i);
+                String animationName = animationElement.getAttribute("name");
+
+                NodeList frameNodes = animationElement.getElementsByTagName("frame");
+                BufferedImage[] frames = new BufferedImage[frameNodes.getLength()];
+
+                for (int j = 0; j < frameNodes.getLength(); j++) {
+                    Element frameElement = (Element) frameNodes.item(j);
+                    int x = Integer.parseInt(frameElement.getAttribute("x"));
+                    int y = Integer.parseInt(frameElement.getAttribute("y"));
+
+                    if (x + spriteWidth > spritesheet.getWidth() || y + spriteHeight > spritesheet.getHeight()) {
+                        throw new IllegalArgumentException("Frame coordinates out of bounds: x=" + x + ", y=" + y);
+                    }
+
+                    frames[j] = spritesheet.getSubimage(x, y, spriteWidth, spriteHeight);
+                }
+
+                animations.put(animationName, frames);
+            }
+
         } catch (Exception e) {
-            System.out.println("Error loading animations for " + characterName);
+            System.err.println("Error loading animations for " + characterName);
             e.printStackTrace();
         }
+
         return animations;
     }
 }

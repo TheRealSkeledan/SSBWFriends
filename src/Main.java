@@ -42,12 +42,13 @@ public class Main extends JPanel {
         setDoubleBuffered(true);
 
         executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(this::gameLoop, 0, 1000000000 / TARGET_FPS, TimeUnit.NANOSECONDS);
+        executorService.scheduleAtFixedRate(this::gameLoop, 0, OPTIMAL_TIME, TimeUnit.NANOSECONDS);
     }
 
     private void gameLoop() {
         move();
         dummy.updatePosition();
+        dummy.updateAnimationFrame();
         repaint();
 
         long now = System.nanoTime();
@@ -63,19 +64,25 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Draw the background
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+        // Draw the stage
         Map.drawStage(g);
 
+        // Draw the character
         if (isFacingRight) {
-            g.drawImage(dummy.getIdle(), dummy.getX(), dummy.getY(), this);
+            g.drawImage(dummy.getCurrentFrame(), dummy.getX(), dummy.getY(), this);
         } else {
-            g.drawImage(dummy.getIdle(), dummy.getX() + dummy.getWidth(), dummy.getY(), -dummy.getWidth(), dummy.getHeight(), this);
+            g.drawImage(dummy.getCurrentFrame(), dummy.getX() + dummy.getWidth(), dummy.getY(),
+                        -dummy.getWidth(), dummy.getHeight(), this);
         }
 
+        // Draw the UI
         UI.drawUI(dummy.getHP(), dummy.getKP(), g);
 
+        // Display FPS
         g.setColor(Color.RED);
         g.drawString("FPS: " + fps, 10, 10);
     }
@@ -104,15 +111,17 @@ public class Main extends JPanel {
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyChar()) {
                 case 'w' -> keys[0] = false;
-                case 'a' -> keys[1] = false;
-                case 's' -> {
-                    keys[2] = false;
-                    dummy.setAction("idle");
+                case 'a' -> {
+                    keys[1] = false;
+                    if (!keys[3]) dummy.setAction("idle");
                 }
-                case 'd' -> keys[3] = false;
+                case 's' -> keys[2] = false;
+                case 'd' -> {
+                    keys[3] = false;
+                    if (!keys[1]) dummy.setAction("idle");
+                }
             }
         }
-
     }
 
     public void move() {
@@ -123,7 +132,7 @@ public class Main extends JPanel {
             dummy.move(-dummy.speed, 0);
         }
         if (keys[2]) {
-            dummy.setAction("crouch");
+            dummy.setAction("idle"); // Changed from "crouch" to "idle"
         }
         if (keys[3]) {
             dummy.move(dummy.speed, 0);

@@ -6,10 +6,10 @@
                 <frame x="0" y="0"/>
             </animation>
             <animation name="walk">
+                <frame x="0" y="0"/>
                 <frame x="300" y="0"/>
                 <frame x="0" y="300"/>
                 <frame x="300" y="300"/>
-                <frame x="600" y="300"/>
                 <frame x="0" y="600"/>
             </animation>
         </animations>

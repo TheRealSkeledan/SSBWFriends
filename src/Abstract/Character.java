@@ -19,6 +19,9 @@ public abstract class Character {
     protected int initialY;
     protected int KP = 0, HP = 100;
 
+    private long lastFrameTime = 0;
+    private long frameDelay = 200;
+
     public Character(String name, int x, int y, int damage, int strength, int resistance, int speed, double weight) {
         this.name = name;
         this.x = x;
@@ -32,7 +35,7 @@ public abstract class Character {
     }
 
     private void loadAnimations() {
-        animations = AnimationLoader.loadAnimations(name);
+        animations = AnimationLoader.loadAnimations(name.toLowerCase());
     }
 
     public void setAction(String action) {
@@ -52,10 +55,14 @@ public abstract class Character {
     }
 
     public void updateAnimationFrame() {
-        if (animations.containsKey(action)) {
-            BufferedImage[] frames = animations.get(action);
-            frameIndex = (frameIndex + 1) % frames.length;
-            updateCurrentFrame();
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFrameTime >= frameDelay) {
+            if (animations.containsKey(action)) {
+                BufferedImage[] frames = animations.get(action);
+                frameIndex = (frameIndex + 1) % frames.length;
+                updateCurrentFrame();
+            }
+            lastFrameTime = currentTime;
         }
     }
 
@@ -66,11 +73,12 @@ public abstract class Character {
     public void move(int dx, int dy) {
         if (x + dx >= 0 && x + dx <= 1280 - getWidth()) {
             x += dx;
+            setAction("walk");
         }
         if (y + dy >= 0 && y + dy <= 720 - getHeight()) {
             y += dy;
+            setAction("walk");
         }
-        setAction("walk");
     }
 
     public void jump() {
