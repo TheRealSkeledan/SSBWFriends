@@ -4,7 +4,9 @@ import Characters.Tom;
 import Engine.Map;
 import Engine.UI;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.concurrent.Executors;
@@ -31,9 +33,14 @@ public class Main extends JPanel {
 
     private ScheduledExecutorService executorService;
 
+    private int renderWidth = SCREEN_WIDTH;
+    private int renderHeight = SCREEN_HEIGHT;
+    private int renderXOffset = 0;
+    private int renderYOffset = 0;
+
     public Main() {
         dummy = new Tom(100, 300);
-        Map.setName("testStage");
+        Map.setName("dam");
         UI.create();
 
         this.setFocusable(true);
@@ -43,6 +50,31 @@ public class Main extends JPanel {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(this::gameLoop, 0, OPTIMAL_TIME, TimeUnit.NANOSECONDS);
+
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                adjustViewport();
+            }
+        });
+    }
+
+    private void adjustViewport() {
+        Dimension size = getSize();
+        double aspectRatio = (double) SCREEN_WIDTH / SCREEN_HEIGHT;
+        double windowRatio = (double) size.width / size.height;
+
+        if (windowRatio > aspectRatio) {
+            renderHeight = size.height;
+            renderWidth = (int) (size.height * aspectRatio);
+            renderXOffset = (size.width - renderWidth) / 2;
+            renderYOffset = 0;
+        } else {
+            renderWidth = size.width;
+            renderHeight = (int) (size.width / aspectRatio);
+            renderXOffset = 0;
+            renderYOffset = (size.height - renderHeight) / 2;
+        }
     }
 
     private void gameLoop() {
@@ -64,27 +96,28 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Draw the background
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
-        // Draw the stage
-        Map.drawStage(g);
+        Graphics2D g2d = (Graphics2D) g.create();
 
-        // Draw the character
+        g2d.translate(renderXOffset, renderYOffset);
+        g2d.scale((double) renderWidth / SCREEN_WIDTH, (double) renderHeight / SCREEN_HEIGHT);
+
+        Map.drawStage(g2d);
         if (isFacingRight) {
-            g.drawImage(dummy.getCurrentFrame(), dummy.getX(), dummy.getY(), this);
+            g2d.drawImage(dummy.getCurrentFrame(), dummy.getX(), dummy.getY(), this);
         } else {
-            g.drawImage(dummy.getCurrentFrame(), dummy.getX() + dummy.getWidth(), dummy.getY(),
-                        -dummy.getWidth(), dummy.getHeight(), this);
+            g2d.drawImage(dummy.getCurrentFrame(), dummy.getX() + dummy.getWidth(), dummy.getY(),
+                          -dummy.getWidth(), dummy.getHeight(), this);
         }
 
-        // Draw the UI
-        UI.drawUI(dummy.getHP(), dummy.getKP(), g);
+        UI.drawUI(dummy.getHP(), dummy.getKP(), g2d);
 
-        // Display FPS
-        g.setColor(Color.RED);
-        g.drawString("FPS: " + fps, 10, 10);
+        g2d.setColor(Color.RED);
+        g2d.drawString("FPS: " + fps, 10, 10);
+
+        g2d.dispose();
     }
 
     private class Keyboard implements KeyListener {
