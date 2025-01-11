@@ -71,7 +71,7 @@ public abstract class Character {
     }
 
     public void move(int dx, int dy) {
-        if (x + dx >= 0 && x + dx <= 1280 - getWidth()) {
+        if (x + dx >= -110 && x + dx <= 1390 - getWidth()) {
             x += dx;
             setAction("walk");
         }

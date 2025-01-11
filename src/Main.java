@@ -162,12 +162,14 @@ public class Main extends JPanel {
             dummy.jump();
         }
         if (keys[1]) {
+            dummy.setAction("walk");
             dummy.move(-dummy.speed, 0);
         }
         if (keys[2]) {
             dummy.setAction("idle"); // Changed from "crouch" to "idle"
         }
         if (keys[3]) {
+            dummy.setAction("walk");
             dummy.move(dummy.speed, 0);
         }
     }

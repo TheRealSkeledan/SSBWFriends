@@ -6,6 +6,6 @@ import Abstract.Character;
 
 public class Tom extends Character {
     public Tom(int x, int y) {
-        super("Tom", x, y, 4, 2, 4, 5, 0.5);
+        super("Tom", x, y, 4, 2, 4, 3, 0.5);
     }
 }
