@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Character {
-    protected String name;
+    public String name;
     public int x, y, speed;
     protected Map<String, BufferedImage[]> animations = new HashMap<>();
     protected BufferedImage currentFrame;
