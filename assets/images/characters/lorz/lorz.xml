@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spritesheet>
-    <character name="tom" spriteWidth="300" spriteHeight="300">
+    <character name="lorz" spriteWidth="300" spriteHeight="300">
         <animations>
             <animation name="idle">
                 <frame x="0" y="0"/>

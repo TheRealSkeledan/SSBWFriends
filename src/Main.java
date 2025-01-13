@@ -22,7 +22,7 @@ public class Main extends JPanel {
     private boolean[] keys = new boolean[4];
     private boolean isFacingRight = true;
 
-    private Tom dummy;
+    private Lorz dummy;
 
     private long lastTime = System.nanoTime();
     private int fps = 0;
@@ -39,7 +39,7 @@ public class Main extends JPanel {
     private int renderYOffset = 0;
 
     public Main() {
-        dummy = new Tom(100, 300);
+        dummy = new Lorz(100, 300);
         Map.setName("dam");
         UI.create();
 
@@ -132,7 +132,7 @@ public class Main extends JPanel {
                     keys[1] = true;
                     isFacingRight = false;
                 }
-                case 's' -> keys[2] = true;
+                case 'f' -> keys[2] = true;
                 case 'd' -> {
                     keys[3] = true;
                     isFacingRight = true;
@@ -146,12 +146,10 @@ public class Main extends JPanel {
                 case 'w' -> keys[0] = false;
                 case 'a' -> {
                     keys[1] = false;
-                    if (!keys[3]) dummy.setAction("idle");
                 }
-                case 's' -> keys[2] = false;
+                case 'f' -> keys[2] = false;
                 case 'd' -> {
                     keys[3] = false;
-                    if (!keys[1]) dummy.setAction("idle");
                 }
             }
         }
@@ -161,16 +159,22 @@ public class Main extends JPanel {
         if (keys[0]) {
             dummy.jump();
         }
-        if (keys[1]) {
-            dummy.setAction("walk");
-            dummy.move(-dummy.speed, 0);
+        if (keys[1] && !keys[2]) {
+            dummy.move(-dummy.speed);
         }
         if (keys[2]) {
-            dummy.setAction("idle"); // Changed from "crouch" to "idle"
+            dummy.defend();
         }
-        if (keys[3]) {
-            dummy.setAction("walk");
-            dummy.move(dummy.speed, 0);
+        if (keys[3] && !keys[2]) {
+            dummy.move(dummy.speed);
+        }
+
+        resetAnim();
+    }
+
+    public void resetAnim() {
+        if(!keys[1] && !keys[2] && !keys[3] && !dummy.jumping) {
+            dummy.setAction("idle");
         }
     }
 

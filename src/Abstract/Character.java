@@ -14,13 +14,14 @@ public abstract class Character {
     protected int damage;
     public double weight;
     protected String action = "idle";
-    protected boolean jumping = false;
     protected double jumpSpeed = 0;
     protected int initialY;
     protected int KP = 0, HP = 100;
 
     private long lastFrameTime = 0;
     private long frameDelay = 200;
+
+    public boolean jumping = false;
 
     public Character(String name, int x, int y, int damage, int strength, int resistance, int speed, double weight) {
         this.name = name;
@@ -70,15 +71,18 @@ public abstract class Character {
         return currentFrame;
     }
 
-    public void move(int dx, int dy) {
+    public void move(int dx) {
         if (x + dx >= -110 && x + dx <= 1390 - getWidth()) {
             x += dx;
-            setAction("walk");
+            if(y == 300)
+                setAction("walk");
+            else
+                setAction("jump");
         }
-        if (y + dy >= 0 && y + dy <= 720 - getHeight()) {
-            y += dy;
-            setAction("walk");
-        }
+    }
+
+    public void defend() {
+        setAction("block");
     }
 
     public void jump() {
