@@ -1,7 +1,6 @@
 // Main.java
 
-import Characters.Lorz;
-import Characters.Tom;
+import Characters.Red;
 import Engine.Map;
 import Engine.UI;
 import java.awt.Color;
@@ -20,12 +19,12 @@ public class Main extends JPanel {
     private static final int SCREEN_WIDTH = 1280;
     private static final int SCREEN_HEIGHT = 720;
 
-    private boolean[] keys = new boolean[8];
+    private boolean[] keys = new boolean[12];
     private boolean p1isFacingRight = true;
     private boolean p2isFacingRight = false;
 
-    private Tom p1;
-    private Lorz p2;
+    private Red p1;
+    private Red p2;
 
     private long lastTime = System.nanoTime();
     private int fps = 0;
@@ -42,8 +41,8 @@ public class Main extends JPanel {
     private int renderYOffset = 0;
 
     public Main() {
-        p1 = new Tom(40, 300);
-        p2 = new Lorz(800, 300);
+        p1 = new Red(40, 300);
+        p2 = new Red(800, 300);
         Map.setName("dam");
         UI.create();
 
@@ -154,17 +153,35 @@ public class Main extends JPanel {
                     keys[3] = true;
                     p1isFacingRight = true;
                 }
+                case 'f' -> {
+                    keys[4] = true;
+                }
+                case 'c' -> {
+                    keys[5] = true;
+                }
+                case 'q' -> {
+                    keys[6] = true;
+                }
 
                 // Player 2
-                case 'i' -> keys[4] = true;
+                case 'i' -> keys[7] = true;
                 case 'j' -> {
-                    keys[5] = true;
+                    keys[8] = true;
                     p2isFacingRight = false;
                 }
-                case 'o' -> keys[6] = true;
+                case 'o' -> keys[9] = true;
                 case 'l' -> {
-                    keys[7] = true;
+                    keys[10] = true;
                     p2isFacingRight = true;
+                }
+                case 'h' -> {
+                    keys[11] = true;
+                }
+                case 'n' -> {
+                    keys[12] = true;
+                }
+                case 'u' -> {
+                    keys[13] = true;
                 }
             }
         }
@@ -172,6 +189,7 @@ public class Main extends JPanel {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyChar()) {
+                // Player 1
                 case 'w' -> keys[0] = false;
                 case 'a' -> keys[1] = false;
                 case 'f' -> keys[2] = false;
